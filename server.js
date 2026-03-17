@@ -26,13 +26,19 @@ var routeHandlers = {
       res.send(tile);
     });
   },
-  getInfo: function(req, res, next) {
-    var tileService = new TileService(req);
-    tileService.getInfo(function(err, info) {
-      if (err) return res.status(404).send(err.message);
-      res.json(info);
-    });
-  },
+getInfo: function(req, res, next) {
+  var tileService = new TileService(req);
+  tileService.getInfo(function(err, info) {
+    if (err) return res.status(404).send(err.message);
+    // Overskriv tiles-URL'er i svaret
+    if (info.tiles) {
+      info.tiles = info.tiles.map(url => 
+        url.replace('th.frb-data.dk', 'tiles-old.frb-data.dk')
+      );
+    }
+    res.json(info);
+  });
+},
   ping: function(req, res, next){
     res.send('tilehut says pong!');
   },
